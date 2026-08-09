@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Results</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    margin:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h2{
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:15px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+    box-sizing:border-box;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#2196F3;
+    color:#fff;
+}
+
+tr:nth-child(even){
+    background:#f9f9f9;
+}
+
+button{
+    padding:10px 20px;
+    margin:10px 5px;
+    cursor:pointer;
+}
+
+.footer{
+    text-align:center;
+    margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📊 Student Results</h2>
+
+<hr>
+
+<input
+type="text"
+id="searchBox"
+placeholder="Search by Name or Email">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>No.</th>
+<th>Student Name</th>
+<th>Email</th>
+<th>Score</th>
+<th>Total</th>
+<th>Percentage</th>
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+<tbody id="resultTable">
+
+<tr>
+
+<td colspan="7">
+Loading Results...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+<div class="footer">
+
+<button id="refreshBtn">
+🔄 Refresh
+</button>
+
+<button onclick="location.href='admin-dashboard.html'">
+⬅ Back to Dashboard
+</button>
+
+</div>
+
+</div>
+
+<script type="module" src="../js/results.js"></script>
+
+</body>
+
+</html>

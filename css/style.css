@@ -1,0 +1,170 @@
+/* ---------- GENERAL ---------- */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#222;
+}
+
+/* ---------- HEADER ---------- */
+
+header{
+    background:#1565c0;
+    color:white;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header h2{
+    font-size:24px;
+}
+
+#timer{
+    background:red;
+    color:white;
+    padding:8px 15px;
+    border-radius:5px;
+}
+
+/* ---------- MAIN ---------- */
+
+#main{
+    display:flex;
+    gap:20px;
+    padding:20px;
+}
+
+/* ---------- QUESTION ---------- */
+
+#leftPanel{
+    width:75%;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+#questionBox h3{
+    margin-bottom:15px;
+}
+
+#questionBox label{
+    display:block;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+#questionBox label:hover{
+    background:#f1f1f1;
+}
+
+/* ---------- BUTTON ---------- */
+
+button{
+    background:#1565c0;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    margin:5px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0d47a1;
+}
+
+/* ---------- PALETTE ---------- */
+
+#rightPanel{
+    width:25%;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+.paletteBtn{
+    width:45px;
+    height:45px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    font-weight:bold;
+}
+
+/* ---------- STATUS ---------- */
+
+.answered{
+    background:green;
+    color:white;
+}
+
+.review{
+    background:orange;
+    color:white;
+}
+
+.current{
+    background:#1565c0;
+    color:white;
+}
+
+.notAnswered{
+    background:white;
+    color:black;
+    border:1px solid #999;
+}
+
+/* ---------- FORM ---------- */
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+textarea{
+    min-height:120px;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:768px){
+
+#main{
+flex-direction:column;
+}
+
+#leftPanel,
+#rightPanel{
+width:100%;
+}
+
+.paletteBtn{
+width:40px;
+height:40px;
+}
+
+header{
+flex-direction:column;
+gap:10px;
+text-align:center;
+}
+
+}

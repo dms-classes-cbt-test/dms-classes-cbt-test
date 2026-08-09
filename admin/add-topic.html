@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Topic</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Add Topic</h2>
+
+    <input type="text" id="topicName" placeholder="Enter Topic Name">
+
+    <br><br>
+
+    <button id="saveTopic">Save Topic</button>
+
+    <hr>
+
+    <h3>Topic List</h3>
+
+    <div id="topicList"></div>
+
+</div>
+
+<script>
+let topics = JSON.parse(localStorage.getItem("topics")) || [];
+
+function showTopics() {
+
+    let list = document.getElementById("topicList");
+    list.innerHTML = "";
+
+    topics.forEach((topic, index) => {
+
+        list.innerHTML += `
+            <p>${index + 1}. ${topic}</p>
+        `;
+
+    });
+
+}
+
+document.getElementById("saveTopic").onclick = function(){
+
+    let topic = document.getElementById("topicName").value.trim();
+
+    if(topic == ""){
+        alert("Enter Topic Name");
+        return;
+    }
+
+    topics.push(topic);
+
+    localStorage.setItem("topics", JSON.stringify(topics));
+
+    document.getElementById("topicName").value="";
+
+    showTopics();
+
+    alert("Topic Saved Successfully");
+
+};
+
+showTopics();
+</script>
+
+</body>
+</html>

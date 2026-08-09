@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Dashboard</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#2196F3;
+}
+
+.welcome{
+    text-align:center;
+    font-size:18px;
+    margin:20px 0;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    font-size:16px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    background:#2196F3;
+    color:white;
+}
+
+button:hover{
+    background:#1976D2;
+}
+
+#testList{
+    margin:20px 0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎓 Student Dashboard</h1>
+
+<hr>
+
+<div class="welcome">
+Welcome,
+<b id="studentName">Student</b>
+</div>
+
+<h3>📚 Available Test</h3>
+
+<div id="testList">
+
+<p><b>Computer Based Test</b></p>
+
+<button onclick="location.href='test.html'">
+📝 Start Test
+</button>
+
+</div>
+
+<hr>
+
+<button onclick="location.href='history.html'">
+📜 Result History
+</button>
+
+<button onclick="location.href='leaderboard.html'">
+🏆 Leaderboard
+</button>
+
+<button onclick="location.href='result.html'">
+📊 Last Result
+</button>
+
+<button onclick="location.href='profile.html'">
+👤 My Profile
+</button>
+
+<button onclick="location.href='settings.html'">
+⚙ Settings
+</button>
+
+<button onclick="location.href='../change-password.html'">
+🔒 Change Password
+</button>
+
+<button onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+<script>
+
+// Show Student Name
+
+const studentName = localStorage.getItem("studentName");
+
+if(studentName){
+
+    document.getElementById("studentName").innerHTML = studentName;
+
+}else{
+
+    document.getElementById("studentName").innerHTML = "Student";
+
+}
+
+</script>
+
+<!-- Firebase Logout -->
+<script type="module" src="../js/logout.js"></script>
+
+</body>
+
+</html>
