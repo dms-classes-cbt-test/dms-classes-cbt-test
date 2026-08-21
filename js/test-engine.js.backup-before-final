@@ -1,0 +1,673 @@
+import { loadQuestionsFirebase } from "./firebase-question.js";
+import { saveResultFirebase } from "./firebase-result.js";
+
+let questions = [];
+let currentQuestion = 0;
+let answers = [];
+let reviewQuestions = [];
+
+let timer = 600;
+let timerInterval = null;
+let testSubmitted = false;
+
+const questionNo = document.getElementById("questionNo");
+const questionText = document.getElementById("questionText");
+
+const option1 = document.getElementById("option1");
+const option2 = document.getElementById("option2");
+const option3 = document.getElementById("option3");
+const option4 = document.getElementById("option4");
+
+const palette = document.getElementById("palette");
+const progress = document.getElementById("progress");
+const timerBox = document.getElementById("timer");
+
+
+// ==========================================
+// LOAD TEST
+// ==========================================
+
+window.addEventListener("load", loadTest);
+
+async function loadTest(){
+
+    try{
+
+        questions = await loadQuestionsFirebase();
+
+    }catch(error){
+
+        console.error("Firebase questions error:", error);
+        questions = [];
+
+    }
+
+    // LocalStorage backup
+    if(!questions || questions.length === 0){
+
+        questions =
+        JSON.parse(
+            localStorage.getItem("questions")
+        ) || [];
+
+    }
+
+    if(!questions || questions.length === 0){
+
+        if(questionText){
+
+            questionText.innerHTML =
+            "No questions available.";
+
+        }
+
+        return;
+
+    }
+
+    // Make sure options exist
+    questions = questions.filter(function(q){
+
+        return q &&
+        Array.isArray(q.options) &&
+        q.options.length === 4;
+
+    });
+
+    answers =
+    new Array(questions.length).fill(null);
+
+    reviewQuestions =
+    new Array(questions.length).fill(false);
+
+    currentQuestion = 0;
+    testSubmitted = false;
+
+    showQuestion();
+    createPalette();
+    updateProgress();
+
+    startTimer(10);
+
+}
+
+
+// ==========================================
+// SHOW QUESTION
+// ==========================================
+
+function showQuestion(){
+
+    if(
+        questions.length === 0 ||
+        !questions[currentQuestion]
+    ){
+
+        return;
+
+    }
+
+    const q = questions[currentQuestion];
+
+    questionNo.innerHTML =
+        "Question " +
+        (currentQuestion + 1) +
+        " / " +
+        questions.length;
+
+    questionText.innerHTML =
+        q.question || "";
+
+    option1.innerHTML =
+        q.options[0] || "";
+
+    option2.innerHTML =
+        q.options[1] || "";
+
+    option3.innerHTML =
+        q.options[2] || "";
+
+    option4.innerHTML =
+        q.options[3] || "";
+
+    const radios =
+    document.querySelectorAll(
+        "input[name='answer']"
+    );
+
+    radios.forEach(function(radio, index){
+
+        radio.checked = false;
+
+        if(q.options[index] !== undefined){
+
+            radio.value = q.options[index];
+
+        }
+
+    });
+
+    // Restore answer
+    if(answers[currentQuestion] !== null){
+
+        radios.forEach(function(radio){
+
+            if(
+                radio.value ===
+                answers[currentQuestion]
+            ){
+
+                radio.checked = true;
+
+            }
+
+        });
+
+    }
+
+    createPalette();
+    updateProgress();
+
+}
+
+
+// ==========================================
+// SAVE ANSWER
+// ==========================================
+
+function saveAnswer(){
+
+    const selected =
+    document.querySelector(
+        "input[name='answer']:checked"
+    );
+
+    if(selected){
+
+        answers[currentQuestion] =
+        selected.value;
+
+    }
+
+    createPalette();
+
+}
+
+
+// ==========================================
+// TIMER
+// ==========================================
+
+function startTimer(minutes = 10){
+
+    clearInterval(timerInterval);
+
+    timer = minutes * 60;
+
+    updateTimer();
+
+    timerInterval =
+    setInterval(function(){
+
+        if(testSubmitted){
+
+            clearInterval(timerInterval);
+
+            return;
+
+        }
+
+        timer--;
+
+        if(timer < 0){
+
+            timer = 0;
+
+        }
+
+        updateTimer();
+
+        if(timer === 0){
+
+            clearInterval(timerInterval);
+
+            submitTest();
+
+        }
+
+    },1000);
+
+}
+
+
+// ==========================================
+// UPDATE TIMER DISPLAY
+// ==========================================
+
+function updateTimer(){
+
+    if(!timerBox){
+
+        return;
+
+    }
+
+    const minutes =
+    Math.floor(timer / 60);
+
+    const seconds =
+    timer % 60;
+
+    timerBox.innerHTML =
+        "Time: " +
+        String(minutes).padStart(2,"0") +
+        ":" +
+        String(seconds).padStart(2,"0");
+
+}
+
+
+// ==========================================
+// CREATE QUESTION PALETTE
+// ==========================================
+
+function createPalette(){
+
+    if(!palette){
+
+        return;
+
+    }
+
+    palette.innerHTML = "";
+
+    for(
+        let i = 0;
+        i < questions.length;
+        i++
+    ){
+
+        const btn =
+        document.createElement("button");
+
+        btn.type = "button";
+
+        btn.className =
+        "paletteBtn";
+
+        btn.textContent =
+        i + 1;
+
+        if(i === currentQuestion){
+
+            btn.classList.add("current");
+
+        }
+
+        if(reviewQuestions[i]){
+
+            btn.classList.add("review");
+
+        }
+
+        if(answers[i] !== null){
+
+            btn.classList.add("answered");
+
+        }
+
+        btn.addEventListener(
+            "click",
+            function(){
+
+                saveAnswer();
+
+                currentQuestion = i;
+
+                showQuestion();
+
+            }
+        );
+
+        palette.appendChild(btn);
+
+    }
+
+}
+
+
+// ==========================================
+// MARK FOR REVIEW
+// ==========================================
+
+function markForReview(){
+
+    if(
+        questions.length === 0 ||
+        testSubmitted
+    ){
+
+        return;
+
+    }
+
+    reviewQuestions[currentQuestion] =
+    !reviewQuestions[currentQuestion];
+
+    createPalette();
+
+}
+
+
+// ==========================================
+// NEXT
+// ==========================================
+
+function nextQuestion(){
+
+    saveAnswer();
+
+    if(
+        currentQuestion <
+        questions.length - 1
+    ){
+
+        currentQuestion++;
+
+        showQuestion();
+
+    }
+
+}
+
+
+// ==========================================
+// PREVIOUS
+// ==========================================
+
+function previousQuestion(){
+
+    saveAnswer();
+
+    if(currentQuestion > 0){
+
+        currentQuestion--;
+
+        showQuestion();
+
+    }
+
+}
+
+
+// ==========================================
+// BUTTON EVENTS
+// ==========================================
+
+const nextBtn =
+document.getElementById("nextBtn");
+
+if(nextBtn){
+
+    nextBtn.addEventListener(
+        "click",
+        nextQuestion
+    );
+
+}
+
+
+const prevBtn =
+document.getElementById("prevBtn");
+
+if(prevBtn){
+
+    prevBtn.addEventListener(
+        "click",
+        previousQuestion
+    );
+
+}
+
+
+const reviewBtn =
+document.getElementById("reviewBtn");
+
+if(reviewBtn){
+
+    reviewBtn.addEventListener(
+        "click",
+        markForReview
+    );
+
+}
+
+
+const submitBtn =
+document.getElementById("submitBtn");
+
+if(submitBtn){
+
+    submitBtn.addEventListener(
+        "click",
+        submitTest
+    );
+
+}
+
+
+// ==========================================
+// PROGRESS
+// ==========================================
+
+function updateProgress(){
+
+    if(!progress || questions.length === 0){
+
+        return;
+
+    }
+
+    const percent =
+    ((currentQuestion + 1) /
+    questions.length) * 100;
+
+    progress.style.width =
+    percent + "%";
+
+}
+
+
+// ==========================================
+// SCORE
+// ==========================================
+
+function calculateScore(){
+
+    let score = 0;
+
+    questions.forEach(
+        function(q,index){
+
+            if(
+                answers[index] ===
+                q.answer
+            ){
+
+                score++;
+
+            }
+
+        }
+    );
+
+    return score;
+
+}
+
+
+// ==========================================
+// SUBMIT TEST
+// ==========================================
+
+async function submitTest(){
+
+    if(testSubmitted){
+
+        return;
+
+    }
+
+    testSubmitted = true;
+
+    clearInterval(timerInterval);
+
+    saveAnswer();
+
+    const score =
+    calculateScore();
+
+    const total =
+    questions.length;
+
+    const percentage =
+    total > 0
+    ? ((score / total) * 100).toFixed(2)
+    : "0.00";
+
+    const status =
+    Number(percentage) >= 40
+    ? "PASS"
+    : "FAIL";
+
+    const result = {
+
+        studentName:
+        localStorage.getItem(
+            "studentName"
+        ) || "",
+
+        studentEmail:
+        localStorage.getItem(
+            "studentEmail"
+        ) || "",
+
+        score: score,
+
+        total: total,
+
+        percentage:
+        Number(percentage),
+
+        status: status,
+
+        answers: answers,
+
+        date:
+        new Date().toLocaleString()
+
+    };
+
+    try{
+
+        await saveResultFirebase(result);
+
+    }catch(error){
+
+        console.error(
+            "Firebase result error:",
+            error
+        );
+
+    }
+
+    let history =
+    JSON.parse(
+        localStorage.getItem(
+            "resultHistory"
+        )
+    ) || [];
+
+    history.push(result);
+
+    localStorage.setItem(
+        "resultHistory",
+        JSON.stringify(history)
+    );
+
+    localStorage.setItem(
+        "lastResult",
+        JSON.stringify(result)
+    );
+
+    alert(
+        "Test Submitted Successfully\n\n" +
+        "Score : " +
+        score +
+        "/" +
+        total
+    );
+
+    window.location.href =
+    "result.html";
+
+}
+
+
+// ==========================================
+// SECURITY
+// ==========================================
+
+document.addEventListener(
+    "contextmenu",
+    function(e){
+
+        e.preventDefault();
+
+    }
+);
+
+document.addEventListener(
+    "copy",
+    function(e){
+
+        e.preventDefault();
+
+    }
+);
+
+document.addEventListener(
+    "cut",
+    function(e){
+
+        e.preventDefault();
+
+    }
+);
+
+document.addEventListener(
+    "paste",
+    function(e){
+
+        e.preventDefault();
+
+    }
+);
+
+
+// ==========================================
+// GLOBAL FUNCTIONS
+// ==========================================
+
+window.nextQuestion =
+nextQuestion;
+
+window.previousQuestion =
+previousQuestion;
+
+window.submitTest =
+submitTest;
+
+window.markForReview =
+markForReview;
+

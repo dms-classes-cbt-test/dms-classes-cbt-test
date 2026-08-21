@@ -1,73 +1,545 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Topic</title>
 
-    <link rel="stylesheet" href="../css/style.css">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Topic</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h2,h3{
+    text-align:center;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+select,
+input{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:16px;
+}
+
+button{
+    padding:12px 20px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+    background:#2196F3;
+    font-size:16px;
+}
+
+.delete{
+    background:#f44336;
+}
+
+.back{
+    background:#ff9800;
+}
+
+.topic-item{
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:5px;
+    background:#fafafa;
+}
+
+</style>
+
 </head>
+
 <body>
 
 <div class="container">
 
-    <h2>Add Topic</h2>
+<h2>📚 Add Topic</h2>
 
-    <input type="text" id="topicName" placeholder="Enter Topic Name">
+<form id="topicForm">
 
-    <br><br>
+<label>Select Subject</label>
 
-    <button id="saveTopic">Save Topic</button>
+<select id="subject" required>
 
-    <hr>
+<option value="">
+-- Select Subject --
+</option>
 
-    <h3>Topic List</h3>
+</select>
 
-    <div id="topicList"></div>
+
+<label>Topic Name</label>
+
+<input
+    type="text"
+    id="topicName"
+    placeholder="Enter Topic Name"
+    required
+>
+
+
+<button type="submit">
+
+💾 Save Topic
+
+</button>
+
+</form>
+
+<hr>
+
+<h3>📚 Topic List</h3>
+
+<div id="topicList">
+Loading...
+</div>
+
+<br>
+
+<button
+    class="back"
+    onclick="location.href='admin-dashboard.html'">
+
+⬅ Back Dashboard
+
+</button>
 
 </div>
 
-<script>
-let topics = JSON.parse(localStorage.getItem("topics")) || [];
 
-function showTopics() {
+<script type="module">
 
-    let list = document.getElementById("topicList");
-    list.innerHTML = "";
+import {
+    db,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc
+} from "../js/firebase.js";
 
-    topics.forEach((topic, index) => {
 
-        list.innerHTML += `
-            <p>${index + 1}. ${topic}</p>
-        `;
+const topicForm =
+    document.getElementById("topicForm");
 
-    });
+const subjectSelect =
+    document.getElementById("subject");
+
+const topicName =
+    document.getElementById("topicName");
+
+const topicList =
+    document.getElementById("topicList");
+
+
+/* ======================================
+   LOAD SUBJECTS
+   ====================================== */
+
+async function loadSubjects(){
+
+    try{
+
+        subjectSelect.innerHTML =
+            '<option value="">-- Select Subject --</option>';
+
+        const snapshot =
+            await getDocs(
+                collection(db,"subjects")
+            );
+
+        if(snapshot.empty){
+
+            subjectSelect.innerHTML =
+                '<option value="">No Subject Found</option>';
+
+            return;
+        }
+
+        snapshot.forEach(function(subject){
+
+            const data =
+                subject.data();
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                subject.id;
+
+            option.textContent =
+                data.subjectName || "Unnamed Subject";
+
+            subjectSelect.appendChild(option);
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Subjects load error: " +
+            error.message
+        );
+
+    }
 
 }
 
-document.getElementById("saveTopic").onclick = function(){
 
-    let topic = document.getElementById("topicName").value.trim();
+/* ======================================
+   LOAD TOPICS
+   ====================================== */
 
-    if(topic == ""){
-        alert("Enter Topic Name");
+async function loadTopics(){
+
+    topicList.innerHTML =
+        "Loading...";
+
+    try{
+
+        const snapshot =
+            await getDocs(
+                collection(db,"topics")
+            );
+
+        topicList.innerHTML = "";
+
+        if(snapshot.empty){
+
+            topicList.innerHTML =
+                "<p>No topics added yet.</p>";
+
+            return;
+        }
+
+        snapshot.forEach(function(topic){
+
+            const data =
+                topic.data();
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "topic-item";
+
+            div.innerHTML = `
+
+                <b>
+                    📚 ${escapeHTML(
+                        data.topicName || "Unnamed Topic"
+                    )}
+                </b>
+
+                <br>
+
+                Subject:
+                ${escapeHTML(
+                    data.subjectName || "Unknown Subject"
+                )}
+
+                <br><br>
+
+                <button
+                    type="button"
+                    class="delete"
+                    data-id="${topic.id}">
+
+                    🗑 Delete
+
+                </button>
+
+            `;
+
+            div.querySelector(".delete")
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        deleteTopic(topic.id);
+
+                    }
+                );
+
+            topicList.appendChild(div);
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        topicList.innerHTML =
+            "<p style='color:red;'>Topics load nahi ho rahe.</p>";
+
+        alert(
+            "Topics load error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ======================================
+   SAVE TOPIC
+   ====================================== */
+
+topicForm.addEventListener(
+    "submit",
+    async function(event){
+
+        event.preventDefault();
+
+        const subjectId =
+            subjectSelect.value;
+
+        const enteredTopic =
+            topicName.value.trim();
+
+
+        if(!subjectId){
+
+            alert(
+                "Please select a Subject."
+            );
+
+            subjectSelect.focus();
+
+            return;
+        }
+
+
+        if(!enteredTopic){
+
+            alert(
+                "Please enter Topic Name."
+            );
+
+            topicName.focus();
+
+            return;
+        }
+
+
+        try{
+
+            /* Get selected subject name */
+
+            const subjectDoc =
+                await getDocs(
+                    collection(db,"subjects")
+                );
+
+            let subjectName =
+                "Unknown Subject";
+
+
+            subjectDoc.forEach(function(subject){
+
+                if(subject.id === subjectId){
+
+                    const data =
+                        subject.data();
+
+                    subjectName =
+                        data.subjectName ||
+                        "Unknown Subject";
+
+                }
+
+            });
+
+
+            /* Check duplicate */
+
+            const topicsSnapshot =
+                await getDocs(
+                    collection(db,"topics")
+                );
+
+            let duplicate = false;
+
+
+            topicsSnapshot.forEach(function(topic){
+
+                const data =
+                    topic.data();
+
+                if(
+                    data.subjectId === subjectId &&
+                    (data.topicName || "")
+                        .toLowerCase() ===
+                    enteredTopic.toLowerCase()
+                ){
+
+                    duplicate = true;
+
+                }
+
+            });
+
+
+            if(duplicate){
+
+                alert(
+                    "This Topic already exists for this Subject."
+                );
+
+                return;
+
+            }
+
+
+            /* Save Topic */
+
+            await addDoc(
+                collection(db,"topics"),
+                {
+                    subjectId: subjectId,
+                    subjectName: subjectName,
+                    topicName: enteredTopic,
+                    createdAt: new Date()
+                }
+            );
+
+
+            alert(
+                "Topic Saved Successfully ✅"
+            );
+
+
+            topicName.value = "";
+
+            subjectSelect.value = "";
+
+
+            loadTopics();
+
+        }
+        catch(error){
+
+            console.error(error);
+
+            alert(
+                "Topic save error: " +
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+/* ======================================
+   DELETE TOPIC
+   ====================================== */
+
+async function deleteTopic(id){
+
+    if(
+        !confirm(
+            "Delete this topic?"
+        )
+    ){
+
         return;
     }
 
-    topics.push(topic);
 
-    localStorage.setItem("topics", JSON.stringify(topics));
+    try{
 
-    document.getElementById("topicName").value="";
+        await deleteDoc(
+            doc(db,"topics",id)
+        );
 
-    showTopics();
 
-    alert("Topic Saved Successfully");
+        alert(
+            "Topic Deleted ✅"
+        );
 
-};
 
-showTopics();
+        loadTopics();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Delete error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* ======================================
+   ESCAPE HTML
+   ====================================== */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* ======================================
+   START
+   ====================================== */
+
+loadSubjects();
+
+loadTopics();
+
 </script>
 
 </body>
+
 </html>

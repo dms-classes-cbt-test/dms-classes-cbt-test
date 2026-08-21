@@ -1,0 +1,9 @@
+node_modules/
+.firebase/
+.firebase-backup/
+*.backup
+*.backup2
+*.backup3
+*.bak
+*.tmp
+firebase-debug.log

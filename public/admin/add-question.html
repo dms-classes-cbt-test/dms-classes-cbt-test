@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Question</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body>
+
+<h2>Add Question</h2>
+
+<label>Subject</label>
+<select id="subject"></select>
+
+<br><br>
+
+<label>Topic</label>
+<select id="topic"></select>
+
+<br><br>
+
+<label>Question</label>
+
+<textarea id="question" placeholder="Enter Question"></textarea>
+
+<br><br>
+
+<label>Option A</label>
+<input type="text" id="option1" placeholder="Option A">
+
+<br><br>
+
+<label>Option B</label>
+<input type="text" id="option2" placeholder="Option B">
+
+<br><br>
+
+<label>Option C</label>
+<input type="text" id="option3" placeholder="Option C">
+
+<br><br>
+
+<label>Option D</label>
+<input type="text" id="option4" placeholder="Option D">
+
+<br><br>
+
+<label>Correct Answer</label>
+<input type="text" id="answer" placeholder="Correct Answer">
+
+<br><br>
+
+<button onclick="saveQuestion()">
+Save Question
+</button>
+
+<hr>
+
+<input
+type="text"
+id="searchBox"
+placeholder="Search Question..."
+onkeyup="searchQuestion()">
+
+<br><br>
+
+<button onclick="exportQuestions()">
+Export Questions
+</button>
+
+<input type="file" id="importFile">
+
+<button onclick="importQuestions()">
+Import Questions
+</button>
+<br>
+
+<button onclick="exportQuestions()">
+📥 Export Questions (JSON)
+</button>
+
+<br><br>
+
+<hr>
+<input
+type="text"
+id="searchBox"
+placeholder="Search Question..."
+onkeyup="searchQuestions()">
+
+<br><br>
+
+<div id="questionList"></div>
+<hr>
+
+<div style="text-align:center;">
+
+<button onclick="prevPage()">
+⬅ Previous
+</button>
+
+<span id="pageInfo"></span>
+
+<button onclick="nextPage()">
+Next ➡
+</button>
+
+</div>
+
+<script type="module" src="../js/admin.js"></script>
+
+</body>
+
+</html>

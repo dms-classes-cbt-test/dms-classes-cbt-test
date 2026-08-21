@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Profile</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+margin:20px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px #ccc;
+}
+
+h2{
+text-align:center;
+}
+
+p{
+font-size:18px;
+padding:8px;
+}
+
+button{
+padding:10px 20px;
+margin-top:20px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Student Profile</h2>
+
+<hr>
+
+<p><b>Name :</b> <span id="name"></span></p>
+
+<p><b>Email :</b> <span id="email"></span></p>
+
+<p><b>Total Tests :</b> <span id="tests"></span></p>
+
+<p><b>Highest Score :</b> <span id="highest"></span></p>
+
+<button onclick="location.href='dashboard.html'">
+Back to Dashboard
+</button>
+
+</div>
+
+<script>
+
+document.getElementById("name").innerHTML =
+localStorage.getItem("studentName") || "Student";
+
+document.getElementById("email").innerHTML =
+localStorage.getItem("studentEmail") || "Not Available";
+
+let history =
+JSON.parse(localStorage.getItem("resultHistory")) || [];
+
+document.getElementById("tests").innerHTML =
+history.length;
+
+let highest = 0;
+
+history.forEach(function(item){
+
+if(Number(item.score) > highest){
+
+highest = Number(item.score);
+
+}
+
+});
+
+document.getElementById("highest").innerHTML =
+highest;
+
+</script>
+
+</body>
+</html>

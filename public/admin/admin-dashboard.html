@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:#fff;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h1{
+    text-align:center;
+    color:#2196F3;
+}
+
+.welcome{
+    text-align:center;
+    font-size:18px;
+    margin:20px 0;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    font-size:16px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    background:#2196F3;
+    color:#fff;
+}
+
+button:hover{
+    background:#1976D2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🛠 DMS CLASSES ADMIN PANEL</h1>
+
+<hr>
+
+<div class="welcome">
+
+Welcome,
+<b id="adminName">Administrator</b>
+
+</div>
+
+<button onclick="location.href='add-subject.html'">
+📘 Add Subject
+</button>
+
+<button onclick="location.href='add-topic.html'">
+📚 Add Topic
+</button>
+
+<button onclick="location.href='add-question.html'">
+❓ Add Question
+</button>
+
+<button onclick="location.href='students.html'">
+👨‍🎓 Students
+</button>
+
+<button onclick="location.href='results.html'">
+📊 Results
+</button>
+
+<button onclick="location.href='statistics.html'">
+📈 Statistics
+</button>
+
+<button onclick="location.href='profile.html'">
+👤 Admin Profile
+</button>
+
+<button onclick="location.href='settings.html'">
+⚙ Settings
+</button>
+
+<button onclick="location.href='../change-password.html'">
+🔒 Change Password
+</button>
+
+<button onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+<script>
+
+// Show Admin Name
+
+const adminName = localStorage.getItem("adminName");
+
+if(adminName){
+
+    document.getElementById("adminName").innerHTML = adminName;
+
+}else{
+
+    document.getElementById("adminName").innerHTML = "Administrator";
+
+}
+
+</script>
+
+<!-- Admin Security -->
+<script src="../js/admin-auth.js"></script>
+
+<!-- Firebase Logout -->
+<script type="module" src="../js/logout.js"></script>
+
+</body>
+
+</html>

@@ -2,6 +2,8 @@
 // ADMIN.JS (PART 1)
 // Imports + Variables + Initialization
 // Subject Loading + Topic Loading
+
+
 // Save Question + Reset Form
 // ======================================
 
@@ -31,6 +33,10 @@ window.onload = async function () {
     loadSubjects();
 
     loadTopics();
+    const subjectSelect = document.getElementById("subject");
+    if (subjectSelect) {
+        subjectSelect.addEventListener("change", loadTopics);
+    }
 
     await showQuestions();
 
@@ -41,78 +47,55 @@ window.onload = async function () {
 // --------------------------------------
 
 function loadSubjects() {
-
     const subject = document.getElementById("subject");
-
     if (!subject) return;
 
-    const subjects =
-        JSON.parse(localStorage.getItem("subjects")) || [];
+    const subjects = JSON.parse(localStorage.getItem("subjects") || "[]");
 
-    subject.innerHTML = "";
+    subject.innerHTML = "<option value=\"\">-- Select Subject --</option>";
 
-    if (subjects.length === 0) {
-
-        subject.innerHTML =
-            "<option value=''>No Subject</option>";
-
-        return;
-    }
-
-    subjects.forEach(function (item) {
-
-        subject.innerHTML += `
-            <option value="${item}">
-                ${item}
-            </option>
-        `;
-
+    subjects.forEach(function(item) {
+        const option = document.createElement("option");
+        option.value = item;
+        option.textContent = item;
+        subject.appendChild(option);
     });
-
 }
-
-// --------------------------------------
-// Load Topics
-// --------------------------------------
 
 function loadTopics() {
-
+    const subject = document.getElementById("subject");
     const topic = document.getElementById("topic");
 
-    if (!topic) return;
+    if (!subject || !topic) return;
 
-    const topics =
-        JSON.parse(localStorage.getItem("topics")) || [];
+    const topics = JSON.parse(localStorage.getItem("topics") || "[]");
 
-    topic.innerHTML = "";
+    topic.innerHTML = "<option value=\"\">-- Select Topic --</option>";
 
-    if (topics.length === 0) {
+    const selectedSubject = subject.value.trim();
 
-        topic.innerHTML =
-            "<option value=''>No Topic</option>";
+    if (!selectedSubject) return;
 
-        return;
-    }
-
-    topics.forEach(function (item) {
-
-        topic.innerHTML += `
-            <option value="${item}">
-                ${item}
-            </option>
-        `;
-
+    topics.forEach(function(item) {
+        if (item.subject && item.name && item.subject === selectedSubject) {
+            const option = document.createElement("option");
+            option.value = item.name;
+            option.textContent = item.name;
+            topic.appendChild(option);
+        }
     });
-
 }
 
 // --------------------------------------
+
+
 // Save Question
 // --------------------------------------
 
 async function saveQuestion() {
 
     const subject =
+
         document.getElementById("subject").value;
 
     const topic =

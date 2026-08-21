@@ -2,120 +2,294 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Question</title>
 
-<title>Add Question</title>
-
-<link rel="stylesheet" href="../css/style.css">
-
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
 <h2>Add Question</h2>
 
-<label>Subject</label>
-<select id="subject"></select>
+
+<!-- =========================
+     DEBUG BOX
+     ========================= -->
+
+<div id="debug"
+     style="background:yellow;
+            color:black;
+            padding:15px;
+            margin:15px;
+            border:1px solid black;">
+    Loading...
+</div>
+
+
+<!-- =========================
+     SUBJECT
+     ========================= -->
+
+<label for="subject">Subject</label>
+
+<select id="subject">
+    <option value="">Select Subject</option>
+</select>
+
 
 <br><br>
 
-<label>Topic</label>
-<select id="topic"></select>
+
+<!-- =========================
+     TOPIC
+     ========================= -->
+
+<label for="topic">Topic</label>
+
+<select id="topic">
+    <option value="">Select Topic</option>
+</select>
+
 
 <br><br>
 
-<label>Question</label>
 
-<textarea id="question" placeholder="Enter Question"></textarea>
+<!-- =========================
+     QUESTION
+     ========================= -->
 
-<br><br>
+<label for="question">Question</label>
 
-<label>Option A</label>
-<input type="text" id="option1" placeholder="Option A">
-
-<br><br>
-
-<label>Option B</label>
-<input type="text" id="option2" placeholder="Option B">
-
-<br><br>
-
-<label>Option C</label>
-<input type="text" id="option3" placeholder="Option C">
-
-<br><br>
-
-<label>Option D</label>
-<input type="text" id="option4" placeholder="Option D">
-
-<br><br>
-
-<label>Correct Answer</label>
-<input type="text" id="answer" placeholder="Correct Answer">
-
-<br><br>
-
-<button onclick="saveQuestion()">
-Save Question
-</button>
-
-<hr>
-
-<input
-type="text"
-id="searchBox"
-placeholder="Search Question..."
-onkeyup="searchQuestion()">
-
-<br><br>
-
-<button onclick="exportQuestions()">
-Export Questions
-</button>
-
-<input type="file" id="importFile">
-
-<button onclick="importQuestions()">
-Import Questions
-</button>
 <br>
 
-<button onclick="exportQuestions()">
-📥 Export Questions (JSON)
+<textarea
+    id="question"
+    placeholder="Enter Question"
+    rows="5"
+    cols="40"></textarea>
+
+
+<br><br>
+
+
+<!-- =========================
+     OPTION A
+     ========================= -->
+
+<label for="option1">Option A</label>
+
+<input
+    type="text"
+    id="option1"
+    placeholder="Option A">
+
+
+<br><br>
+
+
+<!-- =========================
+     OPTION B
+     ========================= -->
+
+<label for="option2">Option B</label>
+
+<input
+    type="text"
+    id="option2"
+    placeholder="Option B">
+
+
+<br><br>
+
+
+<!-- =========================
+     OPTION C
+     ========================= -->
+
+<label for="option3">Option C</label>
+
+<input
+    type="text"
+    id="option3"
+    placeholder="Option C">
+
+
+<br><br>
+
+
+<!-- =========================
+     OPTION D
+     ========================= -->
+
+<label for="option4">Option D</label>
+
+<input
+    type="text"
+    id="option4"
+    placeholder="Option D">
+
+
+<br><br>
+
+
+<!-- =========================
+     CORRECT ANSWER
+     ========================= -->
+
+<label for="answer">Correct Answer</label>
+
+<input
+    type="text"
+    id="answer"
+    placeholder="Correct Answer">
+
+
+<br><br>
+
+
+<!-- =========================
+     SAVE QUESTION
+     ========================= -->
+
+<button id="saveQuestionBtn">
+    Save Question
 </button>
 
+
+<hr>
+
+
+<!-- =========================
+     SEARCH
+     ========================= -->
+
+<h3>Question Management</h3>
+
+<input
+    type="text"
+    id="searchBox"
+    placeholder="Search Question..."
+    onkeyup="searchQuestions()">
+
+
+<br><br>
+
+
+<!-- =========================
+     EXPORT / IMPORT
+     ========================= -->
+
+<button onclick="exportQuestions()">
+    📥 Export Questions (JSON)
+</button>
+
+
+<br><br>
+
+
+<input
+    type="file"
+    id="importFile"
+    accept=".json">
+
+
+<button onclick="importQuestions()">
+    Import Questions
+</button>
+
+
 <br><br>
 
 <hr>
-<input
-type="text"
-id="searchBox"
-placeholder="Search Question..."
-onkeyup="searchQuestions()">
 
-<br><br>
+
+<!-- =========================
+     QUESTION LIST
+     ========================= -->
 
 <div id="questionList"></div>
+
+
 <hr>
+
+
+<!-- =========================
+     PAGINATION
+     ========================= -->
 
 <div style="text-align:center;">
 
-<button onclick="prevPage()">
-⬅ Previous
-</button>
+    <button onclick="prevPage()">
+        ⬅ Previous
+    </button>
 
-<span id="pageInfo"></span>
+    <span id="pageInfo">
+        Page 1
+    </span>
 
-<button onclick="nextPage()">
-Next ➡
-</button>
+    <button onclick="nextPage()">
+        Next ➡
+    </button>
 
 </div>
 
+
+<br><br>
+
+
+<!-- =========================
+     ADMIN JAVASCRIPT
+     ========================= -->
+
 <script type="module" src="../js/admin.js"></script>
+
+
+<!-- =========================
+     ERROR DEBUGGER
+     ========================= -->
+
+<script>
+
+window.addEventListener("error", function(e) {
+
+    const debug =
+        document.getElementById("debug");
+
+    if (debug) {
+
+        debug.innerHTML =
+            "ERROR: " + e.message;
+
+    }
+
+});
+
+
+window.addEventListener(
+    "unhandledrejection",
+    function(e) {
+
+        const debug =
+            document.getElementById("debug");
+
+        if (debug) {
+
+            debug.innerHTML =
+                "ERROR: " +
+                (e.reason?.message || e.reason);
+
+        }
+
+    }
+);
+
+</script>
+
 
 </body>
 
 </html>
+

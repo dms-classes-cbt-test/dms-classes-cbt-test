@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Result History</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+margin:20px;
+background:#f5f5f5;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:#fff;
+padding:20px;
+border-radius:10px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+table,th,td{
+border:1px solid #ccc;
+}
+
+th,td{
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#2196F3;
+color:white;
+}
+
+button{
+padding:10px 20px;
+margin-top:20px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Result History</h2>
+
+<table>
+
+<tr>
+
+<th>No.</th>
+
+<th>Date</th>
+
+<th>Score</th>
+
+<th>Total</th>
+
+<th>Percentage</th>
+
+<th>Status</th>
+
+</tr>
+
+<tbody id="historyTable">
+
+</tbody>
+
+</table>
+
+<br>
+
+<button onclick="location.href='dashboard.html'">
+Back to Dashboard
+</button>
+
+</div>
+
+<script>
+
+let history = JSON.parse(localStorage.getItem("resultHistory")) || [];
+
+let table = document.getElementById("historyTable");
+
+if(history.length===0){
+
+table.innerHTML =
+"<tr><td colspan='6'>No Result Found</td></tr>";
+
+}else{
+
+history.forEach(function(item,index){
+
+table.innerHTML += `
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${item.date}</td>
+
+<td>${item.score}</td>
+
+<td>${item.total}</td>
+
+<td>${item.percentage}%</td>
+
+<td>${item.status}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

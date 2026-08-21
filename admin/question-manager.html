@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Question Manager</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    background:#f5f5f5;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+h1{
+    text-align:center;
+    color:#2196F3;
+}
+
+input,select,textarea{
+
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:16px;
+
+}
+
+textarea{
+
+    resize:vertical;
+    min-height:80px;
+
+}
+
+button{
+
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+    font-size:15px;
+
+}
+
+#saveBtn{
+
+    background:#4CAF50;
+
+}
+
+#updateBtn{
+
+    background:#2196F3;
+
+}
+
+#clearBtn{
+
+    background:#9E9E9E;
+
+}
+
+.backBtn{
+
+    background:#ff9800;
+
+}
+
+.deleteBtn{
+
+    background:#f44336;
+
+}
+
+.editBtn{
+
+    background:#2196F3;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+
+}
+
+table th,
+table td{
+
+    border:1px solid #ddd;
+    padding:8px;
+    text-align:left;
+
+}
+
+table th{
+
+    background:#2196F3;
+    color:white;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📝 Question Manager</h1>
+
+<input type="hidden" id="questionId">
+
+<label>Subject</label>
+<input type="text" id="subject">
+
+<label>Topic</label>
+<input type="text" id="topic">
+
+<label>Question</label>
+<textarea id="question"></textarea>
+
+<label>Option 1</label>
+<input type="text" id="option1">
+
+<label>Option 2</label>
+<input type="text" id="option2">
+
+<label>Option 3</label>
+<input type="text" id="option3">
+
+<label>Option 4</label>
+<input type="text" id="option4">
+
+<label>Correct Answer</label>
+
+<select id="answer">
+
+<option value="">Select Correct Answer</option>
+<option value="0">Option 1</option>
+<option value="1">Option 2</option>
+<option value="2">Option 3</option>
+<option value="3">Option 4</option>
+
+</select>
+
+<button id="saveBtn">💾 Save Question</button>
+
+<button id="updateBtn" style="display:none;">
+✏ Update Question
+</button>
+
+<button id="clearBtn">
+🧹 Clear
+</button>
+
+<button class="backBtn"
+onclick="location.href='admin-dashboard.html'">
+
+⬅ Back Dashboard
+
+</button>
+
+<hr>
+
+<h2>All Questions</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+
+<th>Subject</th>
+
+<th>Topic</th>
+
+<th>Question</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="questionTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script type="module" src="question-manager.js"></script>
+
+</body>
+</html>

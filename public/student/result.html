@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test Result</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+text-align:center;
+margin:30px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+padding:20px;
+border:1px solid #ccc;
+border-radius:10px;
+}
+
+h1{
+color:#2196F3;
+}
+
+h2,h3{
+margin:15px 0;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+cursor:pointer;
+}
+
+.pass{
+color:green;
+font-weight:bold;
+}
+
+.fail{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎉 Test Result</h1>
+
+<hr>
+
+<h2 id="score"></h2>
+
+<h2 id="percentage"></h2>
+
+<h2 id="status"></h2>
+
+<br>
+
+<button onclick="location.href='dashboard.html'">
+Back To Dashboard
+</button>
+
+<button onclick="location.href='history.html'">
+Result History
+</button>
+
+<button onclick="location.href='leaderboard.html'">
+Leaderboard
+</button>
+
+</div>
+
+<script>
+
+let score = Number(localStorage.getItem("score")) || 0;
+
+let total = Number(localStorage.getItem("total")) || 0;
+
+document.getElementById("score").innerHTML =
+"Score : " + score + " / " + total;
+
+let percentage = 0;
+
+if(total>0){
+
+percentage = (score/total)*100;
+
+}
+
+document.getElementById("percentage").innerHTML =
+"Percentage : " + percentage.toFixed(2) + "%";
+
+let resultStatus = "";
+
+if(percentage>=40){
+
+resultStatus = "PASS";
+
+document.getElementById("status").innerHTML =
+"<span class='pass'>✅ PASS</span>";
+
+}else{
+
+resultStatus = "FAIL";
+
+document.getElementById("status").innerHTML =
+"<span class='fail'>❌ FAIL</span>";
+
+}
+
+// Result History
+
+let history =
+JSON.parse(localStorage.getItem("resultHistory")) || [];
+
+history.push({
+
+date:new Date().toLocaleString(),
+
+score:score,
+
+total:total,
+
+percentage:percentage.toFixed(2),
+
+status:resultStatus
+
+});
+
+localStorage.setItem(
+"resultHistory",
+JSON.stringify(history)
+);
+
+// Leaderboard
+
+let leaderboard =
+JSON.parse(localStorage.getItem("leaderboard")) || [];
+
+leaderboard.push({
+
+name:localStorage.getItem("studentName") || "Student",
+
+score:score,
+
+total:total,
+
+percentage:percentage.toFixed(2),
+
+date:new Date().toLocaleString()
+
+});
+
+leaderboard.sort(function(a,b){
+
+return b.score-a.score;
+
+});
+
+localStorage.setItem(
+"leaderboard",
+JSON.stringify(leaderboard)
+);
+
+</script>
+
+</body>
+</html>

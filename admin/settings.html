@@ -13,42 +13,77 @@
 <style>
 
 body{
-font-family:Arial,sans-serif;
-background:#f5f5f5;
-margin:20px;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding:20px;
 }
 
 .container{
-max-width:700px;
-margin:auto;
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.2);
+    max-width:800px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
 }
 
-button{
-width:100%;
-padding:15px;
-margin:10px 0;
-font-size:16px;
-cursor:pointer;
-border:none;
-border-radius:5px;
-background:#2196F3;
-color:white;
+h2{
+    text-align:center;
+    color:#2196F3;
 }
 
-button:hover{
-background:#1976D2;
+h3{
+    border-bottom:1px solid #ddd;
+    padding-bottom:8px;
 }
 
-.danger{
-background:#e53935;
+.item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:6px;
+    background:#fafafa;
 }
 
-.danger:hover{
-background:#c62828;
+.info{
+    flex:1;
+}
+
+.delete{
+    width:auto;
+    padding:8px 14px;
+    margin:0;
+    background:#e53935;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.delete:hover{
+    background:#c62828;
+}
+
+.back{
+    width:100%;
+    padding:12px;
+    margin-top:20px;
+    background:#ff9800;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.empty{
+    color:#777;
+    padding:10px;
 }
 
 </style>
@@ -63,114 +98,603 @@ background:#c62828;
 
 <hr>
 
-<button onclick="clearSubjects()">
-🗑 Delete All Subjects
-</button>
 
-<button onclick="clearTopics()">
-🗑 Delete All Topics
-</button>
+<!-- ========================= -->
+<!-- SUBJECTS -->
+<!-- ========================= -->
 
-<button onclick="clearQuestions()">
-🗑 Delete All Questions
-</button>
+<h3>📘 Subjects</h3>
 
-<button onclick="clearStudents()">
-🗑 Delete All Students
-</button>
+<div id="subjectList"></div>
 
-<button onclick="clearResults()">
-🗑 Delete All Results
-</button>
 
-<button class="danger" onclick="resetSystem()">
-💥 Reset Complete System
-</button>
+<!-- ========================= -->
+<!-- TOPICS -->
+<!-- ========================= -->
 
-<br><br>
+<h3>📚 Topics</h3>
 
-<button onclick="location.href='admin-dashboard.html'">
+<div id="topicList"></div>
+
+
+<!-- ========================= -->
+<!-- QUESTIONS -->
+<!-- ========================= -->
+
+<h3>❓ Questions</h3>
+
+<div id="questionList"></div>
+
+
+<!-- ========================= -->
+<!-- STUDENTS -->
+<!-- ========================= -->
+
+<h3>👨‍🎓 Students</h3>
+
+<div id="studentList"></div>
+
+
+<!-- ========================= -->
+<!-- RESULTS -->
+<!-- ========================= -->
+
+<h3>📊 Results</h3>
+
+<div id="resultList"></div>
+
+
+<button
+    class="back"
+    onclick="location.href='admin-dashboard.html'">
+
 ⬅ Back to Dashboard
+
 </button>
 
 </div>
 
-<script>
 
-function clearSubjects(){
+<script type="module">
 
-if(confirm("Delete all subjects?")){
+import {
+    loadQuestionsFirebase,
+    deleteQuestionFirebase
+} from "../js/firebase-question.js";
 
-localStorage.removeItem("subjects");
 
-alert("All Subjects Deleted");
+// ======================================
+// SUBJECTS
+// ======================================
 
-}
+function loadSubjects(){
 
-}
+    const container =
+        document.getElementById("subjectList");
 
-function clearTopics(){
+    const subjects =
+        JSON.parse(
+            localStorage.getItem("subjects")
+        ) || [];
 
-if(confirm("Delete all topics?")){
+    container.innerHTML = "";
 
-localStorage.removeItem("topics");
+    if(subjects.length === 0){
 
-alert("All Topics Deleted");
+        container.innerHTML =
+            '<div class="empty">No Subjects Found</div>';
 
-}
+        return;
 
-}
+    }
 
-function clearQuestions(){
+    subjects.forEach(function(subject,index){
 
-if(confirm("Delete all questions?")){
+        const div =
+            document.createElement("div");
 
-localStorage.removeItem("questions");
+        div.className = "item";
 
-alert("All Questions Deleted");
+        div.innerHTML = `
 
-}
+            <div class="info">
+                📘 ${escapeHTML(subject)}
+            </div>
 
-}
+            <button
+                class="delete"
+                data-index="${index}">
 
-function clearStudents(){
+                🗑 Delete
 
-if(confirm("Delete all students?")){
+            </button>
+        `;
 
-localStorage.removeItem("students");
+        div.querySelector("button")
+            .addEventListener(
+                "click",
+                function(){
 
-alert("All Students Deleted");
+                    deleteSubject(index);
 
-}
+                }
+            );
 
-}
+        container.appendChild(div);
 
-function clearResults(){
-
-if(confirm("Delete all results?")){
-
-localStorage.removeItem("resultHistory");
-localStorage.removeItem("leaderboard");
-
-alert("All Results Deleted");
-
-}
-
-}
-
-function resetSystem(){
-
-if(confirm("Reset complete CBT System?")){
-
-localStorage.clear();
-
-alert("System Reset Successfully");
-
-window.location.href="../login.html";
+    });
 
 }
 
+
+function deleteSubject(index){
+
+    let subjects =
+        JSON.parse(
+            localStorage.getItem("subjects")
+        ) || [];
+
+    const subject = subjects[index];
+
+    if(!confirm(
+        `Delete Subject "${subject}"?`
+    )){
+        return;
+    }
+
+    subjects.splice(index,1);
+
+    localStorage.setItem(
+        "subjects",
+        JSON.stringify(subjects)
+    );
+
+    loadSubjects();
+
 }
+
+
+// ======================================
+// TOPICS
+// ======================================
+
+function loadTopics(){
+
+    const container =
+        document.getElementById("topicList");
+
+    const topics =
+        JSON.parse(
+            localStorage.getItem("topics")
+        ) || [];
+
+    container.innerHTML = "";
+
+    if(topics.length === 0){
+
+        container.innerHTML =
+            '<div class="empty">No Topics Found</div>';
+
+        return;
+
+    }
+
+    topics.forEach(function(topic,index){
+
+        const subject =
+            topic.subject || "";
+
+        const name =
+            topic.name || "";
+
+        const div =
+            document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+
+            <div class="info">
+
+                📚 <b>${escapeHTML(name)}</b>
+                <br>
+
+                Subject:
+                ${escapeHTML(subject)}
+
+            </div>
+
+            <button
+                class="delete">
+
+                🗑 Delete
+
+            </button>
+
+        `;
+
+        div.querySelector("button")
+            .addEventListener(
+                "click",
+                function(){
+
+                    deleteTopic(index);
+
+                }
+            );
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+function deleteTopic(index){
+
+    let topics =
+        JSON.parse(
+            localStorage.getItem("topics")
+        ) || [];
+
+    const topic = topics[index];
+
+    const name =
+        topic?.name || "this topic";
+
+    if(!confirm(
+        `Delete Topic "${name}"?`
+    )){
+        return;
+    }
+
+    topics.splice(index,1);
+
+    localStorage.setItem(
+        "topics",
+        JSON.stringify(topics)
+    );
+
+    loadTopics();
+
+}
+
+
+// ======================================
+// QUESTIONS - FIRESTORE
+// ======================================
+
+async function loadQuestions(){
+
+    const container =
+        document.getElementById("questionList");
+
+    container.innerHTML =
+        '<div class="empty">Loading Questions...</div>';
+
+    try{
+
+        const questions =
+            await loadQuestionsFirebase();
+
+        container.innerHTML = "";
+
+        if(questions.length === 0){
+
+            container.innerHTML =
+                '<div class="empty">No Questions Found</div>';
+
+            return;
+
+        }
+
+        questions.forEach(function(q){
+
+            const div =
+                document.createElement("div");
+
+            div.className = "item";
+
+            div.innerHTML = `
+
+                <div class="info">
+
+                    ❓ <b>${escapeHTML(q.question)}</b>
+
+                    <br>
+
+                    Subject:
+                    ${escapeHTML(q.subject || "")}
+
+                    <br>
+
+                    Topic:
+                    ${escapeHTML(q.topic || "")}
+
+                </div>
+
+                <button class="delete">
+                    🗑 Delete
+                </button>
+
+            `;
+
+            div.querySelector("button")
+                .addEventListener(
+                    "click",
+                    async function(){
+
+                        await deleteQuestion(q.id);
+
+                    }
+                );
+
+            container.appendChild(div);
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        container.innerHTML =
+            '<div class="empty">Unable to load Questions.</div>';
+
+    }
+
+}
+
+
+async function deleteQuestion(id){
+
+    if(!confirm(
+        "Delete this Question?"
+    )){
+        return;
+    }
+
+    try{
+
+        await deleteQuestionFirebase(id);
+
+        alert(
+            "Question Deleted Successfully ✅"
+        );
+
+        loadQuestions();
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
+}
+
+
+// ======================================
+// STUDENTS
+// ======================================
+
+function loadStudents(){
+
+    const container =
+        document.getElementById("studentList");
+
+    const students =
+        JSON.parse(
+            localStorage.getItem("students")
+        ) || [];
+
+    container.innerHTML = "";
+
+    if(students.length === 0){
+
+        container.innerHTML =
+            '<div class="empty">No Students Found</div>';
+
+        return;
+
+    }
+
+    students.forEach(function(student,index){
+
+        const name =
+            typeof student === "string"
+            ? student
+            : student.name ||
+              student.email ||
+              "Student";
+
+        const div =
+            document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+
+            <div class="info">
+                👨‍🎓 ${escapeHTML(name)}
+            </div>
+
+            <button class="delete">
+                🗑 Delete
+            </button>
+
+        `;
+
+        div.querySelector("button")
+            .addEventListener(
+                "click",
+                function(){
+
+                    deleteStudent(index);
+
+                }
+            );
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+function deleteStudent(index){
+
+    let students =
+        JSON.parse(
+            localStorage.getItem("students")
+        ) || [];
+
+    if(!confirm(
+        "Delete this Student?"
+    )){
+        return;
+    }
+
+    students.splice(index,1);
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+    loadStudents();
+
+}
+
+
+// ======================================
+// RESULTS
+// ======================================
+
+function loadResults(){
+
+    const container =
+        document.getElementById("resultList");
+
+    const results =
+        JSON.parse(
+            localStorage.getItem("resultHistory")
+        ) || [];
+
+    container.innerHTML = "";
+
+    if(results.length === 0){
+
+        container.innerHTML =
+            '<div class="empty">No Results Found</div>';
+
+        return;
+
+    }
+
+    results.forEach(function(result,index){
+
+        const div =
+            document.createElement("div");
+
+        div.className = "item";
+
+        const name =
+            result.studentName ||
+            result.name ||
+            result.email ||
+            "Student";
+
+        div.innerHTML = `
+
+            <div class="info">
+
+                📊 <b>${escapeHTML(name)}</b>
+
+                <br>
+
+                Score:
+                ${escapeHTML(
+                    String(result.score ?? "")
+                )}
+
+            </div>
+
+            <button class="delete">
+                🗑 Delete
+            </button>
+
+        `;
+
+        div.querySelector("button")
+            .addEventListener(
+                "click",
+                function(){
+
+                    deleteResult(index);
+
+                }
+            );
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+function deleteResult(index){
+
+    let results =
+        JSON.parse(
+            localStorage.getItem("resultHistory")
+        ) || [];
+
+    if(!confirm(
+        "Delete this Result?"
+    )){
+        return;
+    }
+
+    results.splice(index,1);
+
+    localStorage.setItem(
+        "resultHistory",
+        JSON.stringify(results)
+    );
+
+    loadResults();
+
+}
+
+
+// ======================================
+// ESCAPE HTML
+// ======================================
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+// ======================================
+// START
+// ======================================
+
+loadSubjects();
+loadTopics();
+loadQuestions();
+loadStudents();
+loadResults();
 
 </script>
 

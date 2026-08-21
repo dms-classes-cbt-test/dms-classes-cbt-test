@@ -11,43 +11,61 @@ loginForm.addEventListener("submit", async function (e) {
         .value
         .trim();
 
-    const password = document
-        .getElementById("password")
-        .value;
+    const password =
+        document.getElementById("password").value;
 
-    if (email === "" || password === "") {
-
+    if (!email || !password) {
         alert("Please fill all fields.");
-
         return;
-
     }
 
     try {
 
-        await login(email, password);
+        const user = await login(email, password);
 
-        // Admin Login
+        // =====================================
+        // STUDENT INFORMATION
+        // =====================================
 
-if (email === "sandeepkr61062@gmail.com") {
+        const studentName =
+            user.displayName ||
+            email.split("@")[0] ||
+            "Student";
 
-    window.location.href =
-    "admin/admin-dashboard.html";
+        localStorage.setItem(
+            "studentName",
+            studentName
+        );
 
-}
+        localStorage.setItem(
+            "studentEmail",
+            user.email || email
+        );
 
-        // Student Login
+        // =====================================
+        // ADMIN
+        // =====================================
 
-        else {
+        if (email === "sandeepkr61062@gmail.com") {
 
             window.location.href =
-            "student/student-dashboard.html";
+                "admin/admin-dashboard.html";
 
+            return;
         }
+
+        // =====================================
+        // STUDENT
+        // =====================================
+
+        window.location.href =
+            "student/dashboard.html";
 
     }
 
     catch (error) {
+
+        console.error(error);
 
         switch (error.code) {
 
@@ -65,9 +83,7 @@ if (email === "sandeepkr61062@gmail.com") {
 
             default:
                 alert(error.message);
-
         }
-
     }
 
 });

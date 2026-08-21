@@ -4,140 +4,278 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CBT Test</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="../css/style.css">
+<title>DMS CLASSES CBT TEST</title>
+
+<link rel="stylesheet"
+href="../css/style.css">
 
 <style>
 
-body{
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+
+body{
+
 background:#f5f5f5;
-margin:20px;
+
+padding:20px;
+
 }
 
 .container{
-max-width:900px;
+
+max-width:950px;
+
 margin:auto;
+
 background:#fff;
+
 padding:20px;
+
 border-radius:10px;
+
 box-shadow:0 0 10px rgba(0,0,0,.2);
+
 }
 
 h2{
+
 text-align:center;
-color:#2196F3;
+
+color:#1976D2;
+
+margin-bottom:20px;
+
 }
 
 #timer{
-font-size:22px;
+
+font-size:24px;
+
 font-weight:bold;
-color:red;
+
+color:white;
+
 text-align:center;
+
 margin:15px 0;
+
 }
 
 #progressBar{
+
 width:100%;
-height:20px;
+
+height:18px;
+
 background:#ddd;
-border-radius:10px;
+
+border-radius:20px;
+
 overflow:hidden;
+
+margin-bottom:20px;
+
 }
 
 #progress{
+
 height:100%;
+
 width:0%;
+
 background:#4CAF50;
-}
 
-#questionNo{
-font-size:18px;
-font-weight:bold;
-margin-top:20px;
-}
+transition:.3s;
 
-#questionText{
-font-size:20px;
-margin:20px 0;
-font-weight:bold;
-}
-
-.option{
-padding:12px;
-margin:10px 0;
-border:1px solid #ccc;
-border-radius:6px;
-cursor:pointer;
-background:#fafafa;
-}
-
-.option:hover{
-background:#e3f2fd;
-}
-
-input[type=radio]{
-margin-right:10px;
 }
 
 #palette{
+
 display:flex;
+
 flex-wrap:wrap;
+
 gap:8px;
-margin:20px 0;
+
+margin-bottom:20px;
+
+justify-content:center;
+
 }
 
 .paletteBtn{
+
 width:40px;
+
 height:40px;
+
 border:none;
+
 border-radius:5px;
+
 cursor:pointer;
+
+font-weight:bold;
+
 background:#ddd;
+
 }
 
 .current{
+
 background:#2196F3;
+
 color:#fff;
+
 }
 
 .answered{
+
 background:#4CAF50;
+
 color:#fff;
+
 }
 
 .review{
+
 background:orange;
+
 color:#fff;
+
 }
 
 .notAnswered{
+
 background:#ddd;
+
+}
+
+#questionNo{
+
+font-size:18px;
+
+font-weight:bold;
+
+margin:15px 0;
+
+color:#333;
+
+}
+
+#questionText{
+
+font-size:20px;
+
+font-weight:bold;
+
+line-height:30px;
+
+margin-bottom:20px;
+
+}
+
+.option{
+
+padding:12px;
+
+margin-bottom:12px;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+background:#fafafa;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.option:hover{
+
+background:#E3F2FD;
+
+}
+
+.option label{
+
+display:block;
+
+cursor:pointer;
+
+width:100%;
+
+}
+
+.option input{
+
+margin-right:10px;
+
 }
 
 .buttons{
+
 display:flex;
+
 justify-content:space-between;
+
 flex-wrap:wrap;
+
 margin-top:25px;
+
+gap:10px;
+
 }
 
 button{
+
 padding:10px 20px;
-cursor:pointer;
+
 border:none;
-border-radius:5px;
-background:#2196F3;
-color:white;
+
+border-radius:6px;
+
+cursor:pointer;
+
+background:#1976D2;
+
+color:#fff;
+
 font-size:15px;
-margin:5px;
+
 }
 
 button:hover{
-background:#1976D2;
+
+background:#0D47A1;
+
+}
+
+@media(max-width:700px){
+
+.buttons{
+
+flex-direction:column;
+
+}
+
+button{
+
+width:100%;
+
+}
+
 }
 
 </style>
@@ -148,72 +286,160 @@ background:#1976D2;
 
 <div class="container">
 
-<h2>🎓 DMS CLASSES CBT TEST</h2>
+<h2>
+🎓 DMS CLASSES CBT TEST
+</h2>
 
 <div id="timer">
 Time Left : 10:00
 </div>
 
 <div id="progressBar">
+
 <div id="progress"></div>
+
+</div>
+<!-- ==========================================
+     QUESTION PALETTE
+     ========================================== -->
+
+<div id="palette">
+    <!-- Question buttons JavaScript से यहाँ आएँगे -->
 </div>
 
-<div id="palette"></div>
 
-<div id="questionNo"></div>
+<!-- ==========================================
+     QUESTION NUMBER
+     ========================================== -->
 
-<div id="questionText"></div>
+<div id="questionNo">
+    Question 1 / 1
+</div>
+
+
+<!-- ==========================================
+     QUESTION TEXT
+     ========================================== -->
+
+<div id="questionText">
+    Loading Question...
+</div>
+
+
+<!-- ==========================================
+     OPTIONS
+     ========================================== -->
 
 <div class="option">
-<label>
-<input type="radio" name="answer" value="">
-<span id="option1"></span>
-</label>
+
+    <label>
+
+        <input
+            type="radio"
+            name="answer"
+            value=""
+        >
+
+        <span id="option1"></span>
+
+    </label>
+
 </div>
 
-<div class="option">
-<label>
-<input type="radio" name="answer" value="">
-<span id="option2"></span>
-</label>
-</div>
 
 <div class="option">
-<label>
-<input type="radio" name="answer" value="">
-<span id="option3"></span>
-</label>
+
+    <label>
+
+        <input
+            type="radio"
+            name="answer"
+            value=""
+        >
+
+        <span id="option2"></span>
+
+    </label>
+
 </div>
 
+
 <div class="option">
-<label>
-<input type="radio" name="answer" value="">
-<span id="option4"></span>
-</label>
+
+    <label>
+
+        <input
+            type="radio"
+            name="answer"
+            value=""
+        >
+
+        <span id="option3"></span>
+
+    </label>
+
 </div>
+
+
+<div class="option">
+
+    <label>
+
+        <input
+            type="radio"
+            name="answer"
+            value=""
+        >
+
+        <span id="option4"></span>
+
+    </label>
+
+</div>
+<!-- ==========================================
+     TEST BUTTONS
+     ========================================== -->
+
 <div class="buttons">
 
-<button id="prevBtn">
-⬅ Previous
-</button>
+    <button
+        type="button"
+        id="prevBtn">
+        ⬅ Previous
+    </button>
 
-<button id="reviewBtn">
-⭐ Mark For Review
-</button>
+    <button
+        type="button"
+        id="reviewBtn">
+        ⭐ Mark For Review
+    </button>
 
-<button id="nextBtn">
-Next ➡
-</button>
+    <button
+        type="button"
+        id="nextBtn">
+        Next ➡
+    </button>
 
-<button id="submitBtn">
-✅ Submit Test
-</button>
+    <button
+        type="button"
+        id="submitBtn">
+        ✅ Submit Test
+    </button>
 
 </div>
 
 </div>
 
-<script type="module" src="../js/test-engine.js"></script>
+
+<!-- ==========================================
+     TEST ENGINE JAVASCRIPT
+     ========================================== -->
+
+<script
+    type="module"
+    src="../js/test-engine.js">
+</script>
 
 </body>
+
 </html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Registered Students</h2>
+
+    <hr>
+
+    <div id="studentList"></div>
+
+    <br>
+
+    <button onclick="location.href='admin-dashboard.html'">
+        Back to Dashboard
+    </button>
+
+</div>
+
+<script>
+let students = JSON.parse(localStorage.getItem("students")) || [];
+
+let list = document.getElementById("studentList");
+
+if (students.length === 0) {
+
+    list.innerHTML = "<h3>No Students Registered</h3>";
+
+} else {
+
+    students.forEach((student, index) => {
+
+        list.innerHTML += `
+            <div style="border:1px solid #ccc;padding:10px;margin:10px 0;">
+                <b>${index + 1}. ${student.name || "Student"}</b><br>
+                Email: ${student.email || "N/A"}
+            </div>
+        `;
+
+    });
+
+}
+</script>
+
+</body>
+</html>

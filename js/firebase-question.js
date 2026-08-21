@@ -1,41 +1,167 @@
-// ======================================
-// FIREBASE-QUESTION.JS (PART 1)
-// Firestore Setup + Save Question
-// ======================================
-
-import { db } from "./firebase-config.js";
+import { db } from "./firebase.js";
 
 import {
     collection,
-    addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-// Firestore Collection
+
+// ==========================================
+// FIRESTORE QUESTIONS COLLECTION
+// ==========================================
 
 const questionCollection = collection(db, "questions");
 
-// ======================================
-// Save Question
-// ======================================
 
-export async function saveQuestionFirebase(questionData) {
+// ==========================================
+// LOAD QUESTIONS
+// ==========================================
+
+export async function loadQuestionsFirebase() {
+
+    console.log("Loading questions from Firebase...");
 
     try {
 
-        const docRef = await addDoc(
-            questionCollection,
-            {
-                ...questionData,
-                createdAt: Date.now()
-            }
+        const snapshot =
+            await getDocs(questionCollection);
+
+        console.log(
+            "Firebase question count:",
+            snapshot.size
         );
 
-        return docRef.id;
+        const questions = [];
+
+        snapshot.forEach(function(docSnap) {
+
+            const data = docSnap.data();
+
+            console.log(
+                "Question document:",
+                docSnap.id,
+                data
+            );
+
+            // ----------------------------------
+            // SUPPORT BOTH DATA FORMATS
+            // ----------------------------------
+
+            let options = [];
+
+            if (Array.isArray(data.options)) {
+
+                options = [
+                    data.options[0] || "",
+                    data.options[1] || "",
+                    data.options[2] || "",
+                    data.options[3] || ""
+                ];
+
+            } else {
+
+                options = [
+                    data.option1 || "",
+                    data.option2 || "",
+                    data.option3 || "",
+                    data.option4 || ""
+                ];
+
+            }
+
+
+            const question = {
+
+                id: docSnap.id,
+
+                subjectId:
+                    data.subjectId || "",
+
+                subjectName:
+                    data.subjectName || "",
+
+                topicId:
+                    data.topicId || "",
+
+                topicName:
+                    data.topicName || "",
+
+                question:
+                    String(data.question || ""),
+
+                options: options,
+
+                option1:
+                    String(options[0] || ""),
+
+                option2:
+                    String(options[1] || ""),
+
+                option3:
+                    String(options[2] || ""),
+
+                option4:
+                    String(options[3] || ""),
+
+                answer:
+                    String(data.answer || ""),
+
+                marks:
+                    Number(data.marks) || 1
+
+            };
+
+
+            // ----------------------------------
+            // ONLY ADD VALID QUESTIONS
+            // ----------------------------------
+
+            if (
+                question.question.trim() !== "" &&
+                question.options.length === 4 &&
+                question.options.every(function(option) {
+
+                    return String(option).trim() !== "";
+
+                })
+            ) {
+
+                questions.push(question);
+
+            } else {
+
+                console.warn(
+                    "Invalid question skipped:",
+                    docSnap.id,
+                    question
+                );
+
+            }
+
+        });
+
+
+        console.log(
+            "Converted questions:",
+            questions
+        );
+
+        console.log(
+            "Valid Firebase questions:",
+            questions.length
+        );
+
+
+        return questions;
+
 
     } catch (error) {
 
         console.error(
-            "Save Question Error:",
+            "loadQuestionsFirebase ERROR:",
             error
         );
 
@@ -44,129 +170,69 @@ export async function saveQuestionFirebase(questionData) {
     }
 
 }
-// ======================================
-// FIREBASE-QUESTION.JS (PART 2)
-// Load Questions + Delete Question
-// ======================================
 
-import {
-    getDocs,
-    deleteDoc,
-    doc,
-    query,
-    orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ======================================
-// Load Questions
-// ======================================
+// ==========================================
+// UPDATE QUESTION
+// ==========================================
 
-export async function loadQuestionsFirebase() {
+export async function updateQuestion(
+    id,
+    data
+) {
 
-    try {
+    if (!id) {
 
-        const q = query(
-            questionCollection,
-            orderBy("createdAt", "desc")
+        throw new Error(
+            "Question ID missing"
         );
-
-        const snapshot = await getDocs(q);
-
-        const questions = [];
-
-        snapshot.forEach(function(docSnap){
-
-            questions.push({
-
-                id: docSnap.id,
-
-                ...docSnap.data()
-
-            });
-
-        });
-
-        return questions;
 
     }
 
-    catch(error){
 
-        console.error(
-            "Load Question Error:",
-            error
+    const questionRef =
+        doc(
+            db,
+            "questions",
+            id
         );
 
-        return [];
 
-    }
+    await updateDoc(
+        questionRef,
+        data
+    );
 
 }
 
-// ======================================
-// Delete Question
-// ======================================
 
-export async function deleteQuestionFirebase(id){
+// ==========================================
+// DELETE QUESTION
+// ==========================================
 
-    try{
+export async function deleteQuestionFirebase(
+    id
+) {
 
-        await deleteDoc(
-            doc(db, "questions", id)
+    if (!id) {
+
+        throw new Error(
+            "Question ID missing"
         );
 
     }
 
-    catch(error){
 
-        console.error(
-            "Delete Question Error:",
-            error
+    const questionRef =
+        doc(
+            db,
+            "questions",
+            id
         );
 
-        throw error;
 
-    }
-
-}
-// ======================================
-// FIREBASE-QUESTION.JS (PART 3)
-// Update Question
-// ======================================
-
-import {
-    updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-// ======================================
-// Update Question
-// ======================================
-
-export async function updateQuestionFirebase(id, questionData) {
-
-    try {
-
-        const questionRef = doc(db, "questions", id);
-
-        await updateDoc(questionRef, {
-
-            ...questionData,
-
-            updatedAt: Date.now()
-
-        });
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Update Question Error:",
-            error
-        );
-
-        throw error;
-
-    }
+    await deleteDoc(
+        questionRef
+    );
 
 }
